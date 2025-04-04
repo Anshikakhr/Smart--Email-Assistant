@@ -1,24 +1,28 @@
-# Use official OpenJDK 17 image as base
+# Use official OpenJDK 17 image
 FROM eclipse-temurin:17-jdk
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the pom.xml and mvnw files first to leverage Docker cache for dependencies
+# Copy Maven files first for caching
 COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
-# Install Maven dependencies
-RUN ./mvnw dependency:resolve
+# Download dependencies (cached unless pom.xml changes)
+RUN ./mvnw dependency:go-offline
 
-# Copy the rest of the project
+# Copy the rest of the source code
 COPY . .
 
-# Expose the port your app runs on (usually 8080 for Spring Boot apps)
+# Package the application
+RUN ./mvnw clean package -DskipTests
+
+# Expose port (default Spring Boot port)
 EXPOSE 8080
 
-# Run the Spring Boot application without a JAR (directly using Maven)
-CMD ["./mvn", "spring-boot:run"]
+# Run the packaged JAR
+CMD ["java", "-jar", "target/smart-email-assistant-0.0.1-SNAPSHOT.jar"]
+
 
 
