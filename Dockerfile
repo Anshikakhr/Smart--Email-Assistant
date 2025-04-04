@@ -1,28 +1,29 @@
 # Use official OpenJDK 17 image
 FROM eclipse-temurin:17-jdk
 
-# Set the working directory
 WORKDIR /app
 
-# Copy Maven files first for caching
+# Copy Maven wrapper and grant execute permissions
 COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
+RUN chmod +x mvnw
 
-# Download dependencies (cached unless pom.xml changes)
+# Download dependencies
 RUN ./mvnw dependency:go-offline
 
-# Copy the rest of the source code
+# Copy the full project
 COPY . .
 
 # Package the application
 RUN ./mvnw clean package -DskipTests
 
-# Expose port (default Spring Boot port)
+# Expose the port
 EXPOSE 8080
 
-# Run the packaged JAR
+# Run the JAR
 CMD ["java", "-jar", "target/smart-email-assistant-0.0.1-SNAPSHOT.jar"]
+
 
 
 
