@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy all files into the container
 COPY . .
 
+# Make the mvnw script executable
+RUN chmod +x mvnw
+
 # Build the project
 RUN ./mvnw clean package -DskipTests
 
@@ -15,3 +18,4 @@ EXPOSE 8080
 
 # Run the Spring Boot application
 CMD ["java", "-jar", "target/*.jar"]
+
