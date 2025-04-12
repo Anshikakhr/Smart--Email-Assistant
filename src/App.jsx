@@ -75,7 +75,7 @@ function App() {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post("http://localhost:8080/api/email/generate", {
+      const response = await axios.post("https://auto-compose.onrender.com/api/email/generate", {
         emailContent,
         tone 
       });
